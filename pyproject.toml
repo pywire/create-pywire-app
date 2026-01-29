@@ -1,0 +1,20 @@
+[project]
+name = "create-pywire-app"
+version = "0.1.0"
+description = "Astro-like init wizard for new PyWire projects"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "rich>=13.0.0",
+    "questionary>=2.0.0",
+]
+
+[project.scripts]
+create-pywire-app = "create_pywire_app.main:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/create_pywire_app"]

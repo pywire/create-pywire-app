@@ -1,0 +1,16 @@
+#!/bin/sh
+set -e
+
+echo "🔍 Running checks for create-pywire-app..."
+
+if [ -t 1 ]; then
+    COLOR_ARGS="--color=yes"
+else
+    COLOR_ARGS="--color=no"
+fi
+
+echo "Running pytest..."
+uv run pytest $COLOR_ARGS tests/
+
+echo "Running mypy..."
+uv run mypy src/
