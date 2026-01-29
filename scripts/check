@@ -9,8 +9,14 @@ else
     COLOR_ARGS="--color=no"
 fi
 
-echo "Running pytest..."
-uv run pytest $COLOR_ARGS tests/
+echo "-> Testing (Multi-version)..."
+# Use uv run to execute tox from dev dependencies, ensuring availability for all cloners
+if command -v tox >/dev/null 2>&1; then
+    tox -p auto
+else
+    # Fallback to uv run tox if global tox not found
+    uv run tox -p auto || uv run pytest
+fi
 
 echo "Running mypy..."
 uv run mypy src/
