@@ -1,6 +1,6 @@
 # create-pywire-app
 
-Quick start wizard for new PyWire projects.
+Quick start wizard for new pywire projects.
 
 ## Usage
 

@@ -27,7 +27,7 @@ LOGO = r"""
 PYPROJECT_TOML = """[project]
 name = "{project_name}"
 version = "0.1.0"
-description = "A new PyWire application"
+description = "A new pywire application"
 requires-python = ">=3.12"
 dependencies = [
     "{dependency}",
@@ -62,7 +62,7 @@ LAYOUT_WIRE_PATH_BASED = """<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>My PyWire App</title>
+    <title>My pywire App</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
 </head>
 <body>
@@ -81,7 +81,7 @@ LAYOUT_WIRE_PATH_BASED = """<!DOCTYPE html>
 """
 
 INDEX_WIRE_PATH_BASED = """<div class="container">
-    <h1>Welcome to PyWire</h1>
+    <h1>Welcome to pywire</h1>
     <p>Edit <code>pages/index.wire</code> to allow hot reload to do its magic!</p>
     <p>Count is: {count}</p>
     <button @click={count += 1}>Increment</button>
@@ -96,7 +96,7 @@ LAYOUT_WIRE_DICT_BASED = """<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>My PyWire App</title>
+    <title>My pywire App</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
 </head>
 <body>
@@ -118,7 +118,7 @@ HOME_WIRE_DICT_BASED = """!path "/"
 !layout "layout.wire"
 
 <div class="container">
-    <h1>Welcome to PyWire (Dict/Attr Routing)</h1>
+    <h1>Welcome to pywire (Dict/Attr Routing)</h1>
     <p>This page uses explicit routing via <code>!path</code> attributes.</p>
     <p>Count is: {count}</p>
     <button @click={count += 1}>Increment</button>

@@ -1,7 +1,7 @@
 [project]
 name = "create-pywire-app"
 version = "0.1.0"
-description = "Astro-like init wizard for new PyWire projects"
+description = "Init wizard for new pywire projects"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
