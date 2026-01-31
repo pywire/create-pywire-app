@@ -80,15 +80,14 @@ LAYOUT_WIRE_PATH_BASED = """<!DOCTYPE html>
 </html>
 """
 
-INDEX_WIRE_PATH_BASED = """<div class="container">
+INDEX_WIRE_PATH_BASED = """count = 0
+---html---
+<div class="container">
     <h1>Welcome to pywire</h1>
     <p>Edit <code>pages/index.wire</code> to allow hot reload to do its magic!</p>
     <p>Count is: {count}</p>
     <button @click={count += 1}>Increment</button>
 </div>
-
----
-count = 0
 """
 
 LAYOUT_WIRE_DICT_BASED = """<!DOCTYPE html>
@@ -117,15 +116,14 @@ LAYOUT_WIRE_DICT_BASED = """<!DOCTYPE html>
 HOME_WIRE_DICT_BASED = """!path "/"
 !layout "layout.wire"
 
+count = 0
+---html---
 <div class="container">
     <h1>Welcome to pywire (Dict/Attr Routing)</h1>
     <p>This page uses explicit routing via <code>!path</code> attributes.</p>
     <p>Count is: {count}</p>
     <button @click={count += 1}>Increment</button>
 </div>
-
----
-count = 0
 """
 
 DOCKERFILE = """FROM python:3.12-slim

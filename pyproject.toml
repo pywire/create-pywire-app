@@ -26,3 +26,12 @@ dev = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/create_pywire_app"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "src/create_pywire_app/**",
+    "tests/**",
+    "README.md",
+    "LICENSE",
+    "pyproject.toml",
+]
