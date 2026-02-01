@@ -7,6 +7,7 @@ requires-python = ">=3.11"
 dependencies = [
     "rich>=13.0.0",
     "questionary>=2.0.0",
+    "jinja2>=3.1.0",
 ]
 
 [project.scripts]
@@ -26,6 +27,9 @@ dev = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/create_pywire_app"]
+
+[tool.hatch.build.targets.wheel.shared-data]
+"src/create_pywire_app/templates" = "share/create_pywire_app/templates"
 
 [tool.hatch.build.targets.sdist]
 include = [

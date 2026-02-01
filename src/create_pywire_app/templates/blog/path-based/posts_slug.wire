@@ -1,0 +1,28 @@
+from pathlib import Path
+import sqlite3
+import markdown
+
+app_root = Path(__file__).resolve().parent.parent
+
+db_path = app_root / "data" / "blog.db"
+
+connection = sqlite3.connect(db_path)
+connection.row_factory = sqlite3.Row
+cursor = connection.cursor()
+post = cursor.execute(
+    "select title, body from posts where slug = ?",
+    (slug,),
+).fetchone()
+
+if post:
+    title = post["title"]
+    body_html = markdown.markdown(post["body"])
+else:
+    title = "Post not found"
+    body_html = "<p>We couldn't find that post.</p>"
+
+---html---
+<article>
+    <h1>{title}</h1>
+    <div>{body_html}</div>
+</article>
