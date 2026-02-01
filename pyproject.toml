@@ -39,3 +39,8 @@ include = [
     "LICENSE",
     "pyproject.toml",
 ]
+
+[tool.mypy]
+exclude = [
+    "src/create_pywire_app/templates",
+]
