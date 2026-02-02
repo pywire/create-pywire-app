@@ -1,6 +1,6 @@
 [project]
 name = "create-pywire-app"
-version = "0.1.3"
+dynamic = ["version"]
 description = "Init wizard for new pywire projects"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -14,7 +14,7 @@ dependencies = [
 create-pywire-app = "create_pywire_app.main:main"
 
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 
@@ -44,3 +44,9 @@ include = [
 exclude = [
     "src/create_pywire_app/templates",
 ]
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.build.hooks.vcs]
+version-file = "src/create_pywire_app/_version.py"
