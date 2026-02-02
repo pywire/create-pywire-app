@@ -113,6 +113,7 @@ class ProjectGenerator:
         self._generate_gitignore()
         self._generate_main()
         self._generate_error_page()
+        self._generate_vscode_settings()
 
         # Generate template-specific files
         if self.template == "counter":
@@ -150,10 +151,19 @@ class ProjectGenerator:
         """Generate .gitignore."""
         self.renderer.copy_static("common/.gitignore", self.project_path / ".gitignore")
 
+    def _generate_vscode_settings(self) -> None:
+        """Generate VS Code settings."""
+        vscode_dir = self.project_path / ".vscode"
+        vscode_dir.mkdir(exist_ok=True)
+        self.renderer.copy_static("common/extensions.json", vscode_dir / "extensions.json")
+
     def _generate_main(self) -> None:
         """Generate main.py."""
         template_name = "main-path.py.j2" if self.routing_strategy == "path" else "main-explicit.py.j2"
-        content = self.renderer.render(f"common/{template_name}", {})
+        context = {
+            "pages_dir": "src/pages" if self.use_src else "pages",
+        }
+        content = self.renderer.render(f"common/{template_name}", context)
         (self.app_root / "main.py").write_text(content)
 
     def _generate_error_page(self) -> None:
@@ -396,6 +406,8 @@ def main():
 Run the following commands to enter the environment:
 
     {cmd_text}
+
+> **Tip:** Install the **PyWire** extension (id: `pywire.pywire`) in VS Code for syntax highlighting and snippets.
             """
                 ),
                 border_style="cyan",
