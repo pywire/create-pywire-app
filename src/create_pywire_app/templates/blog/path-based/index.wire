@@ -45,11 +45,14 @@ posts = cursor.execute(
     "select slug, title from posts order by id desc"
 ).fetchall()
 
----html---
+--- html ---
+
 <section>
     <h1>Blog + Portfolio</h1>
     <p>Markdown posts backed by SQLite.</p>
     <ul>
-        {"".join([f'<li><a href="/posts/{row["slug"]}">{row["title"]}</a></li>' for row in posts])}
+        <li $for={post in posts} $key={post["slug"]}>
+            <a href="/posts/{row["slug"]}">{row["title"]}</a>
+        </li>
     </ul>
 </section>

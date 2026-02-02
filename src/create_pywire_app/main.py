@@ -277,6 +277,19 @@ class ProjectGenerator:
 
 
 def main():
+    # Fix for macOS when running with redirected stdin (e.g. via pipe)
+    # KqueueSelector fails with /dev/tty on macOS, so we force SelectSelector.
+    if sys.platform == "darwin":
+        import asyncio
+        import selectors
+
+        class MacOSEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
+            def new_event_loop(self):
+                selector = selectors.SelectSelector()
+                return asyncio.SelectorEventLoop(selector)
+
+        asyncio.set_event_loop_policy(MacOSEventLoopPolicy())
+
     console.clear()
 
     # Parse arguments

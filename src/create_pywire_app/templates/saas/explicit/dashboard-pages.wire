@@ -11,7 +11,8 @@ settings_sections = [
     {"id": "team", "title": "Team", "description": "Invite and manage team members."},
 ]
 
----html---
+--- html ---
+
 <main>
     <!-- Dashboard home: /dashboard -->
     <section $if={path.home}>

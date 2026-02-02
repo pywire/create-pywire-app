@@ -14,15 +14,9 @@ post = cursor.execute(
     (slug,),
 ).fetchone()
 
-if post:
-    title = post["title"]
-    body_html = markdown.markdown(post["body"])
-else:
-    title = "Post not found"
-    body_html = "<p>We couldn't find that post.</p>"
+--- html ---
 
----html---
 <article>
-    <h1>{title}</h1>
-    <div>{body_html}</div>
+    <h1>{post["title"] if post else "Post not found"}</h1>
+    <div>{!html markdown.markdown(post["body"]) if post else "<p>We couldn't find that post.</p>"}</div>
 </article>

@@ -31,15 +31,9 @@ if path.detail:
         "select title, body from posts where slug = ?",
         (slug,),
     ).fetchone()
-    
-    if post:
-        post_title = post["title"]
-        post_body_html = markdown.markdown(post["body"])
-    else:
-        post_title = "Post not found"
-        post_body_html = "<p>We couldn't find that post.</p>"
 
----html---
+--- html ---
+
 <main>
     <!-- List view: /posts -->
     <section $if={path.list}>
@@ -54,8 +48,8 @@ if path.detail:
     
     <!-- Detail view: /posts/{slug} -->
     <article $if={path.detail}>
-        <h1>{post_title}</h1>
-        <div>{post_body_html}</div>
+        <h1>{post_title if post else "Post not found"}</h1>
+        <div>{!html markdown.markdown(post["body"]) if post else "<p>We couldn't find that post.</p>"}</div>
         <p><a href="/posts">← Back to all posts</a></p>
     </article>
 </main>
