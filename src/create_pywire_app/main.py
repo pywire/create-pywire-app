@@ -351,6 +351,7 @@ def main():
             generator.generate()
 
             # Initialize git repo
+            git_initialized = False
             try:
                 subprocess.run(
                     ["git", "init"],
@@ -359,8 +360,33 @@ def main():
                     capture_output=True,
                     text=True,
                 )
+                git_initialized = True
             except (FileNotFoundError, subprocess.CalledProcessError):
                 pass  # Silently skip if git is not available
+            if git_initialized:
+                try:
+                    subprocess.run(
+                        ["git", "add", "."],
+                        cwd=project_path,
+                        check=True,
+                        capture_output=True,
+                        text=True,
+                    )
+                    subprocess.run(
+                        ["git", "commit", "-m", "feat: initial project structure"],
+                        cwd=project_path,
+                        check=True,
+                        capture_output=True,
+                        text=True,
+                    )
+                except subprocess.CalledProcessError as e:
+                    console.print(
+                        "[yellow]![/yellow] Git commit skipped (configure user.name/email to enable)."
+                    )
+                    if e.stderr:
+                        console.print(e.stderr)
+                except FileNotFoundError:
+                    console.print("[yellow]![/yellow] Git not found, skipping commit")
 
             console.print("[green]✓[/green] Project structure created")
 
@@ -387,20 +413,55 @@ def main():
             except FileNotFoundError:
                 console.print("[yellow]![/yellow] uv not found, skipping sync")
 
-        # Success message
-        console.print()
+        next_action = questionary.select(
+            "What would you like to do next?",
+            choices=[
+                questionary.Choice("Start development server", value="start"),
+                questionary.Choice("Show instructions and exit", value="instructions"),
+            ],
+            pointer=">",
+        ).unsafe_ask()
 
-        commands = [f"cd {project_location}"]
-        if not sync_success:
-            commands.append("uv sync")
-        commands.append("pywire dev")
+        should_show_instructions = next_action == "instructions"
+        if next_action == "start":
+            try:
+                subprocess.run(
+                    ["uv", "run", "pywire", "dev"],
+                    cwd=project_path,
+                    check=True,
+                )
+                return
+            except subprocess.CalledProcessError:
+                console.print("[red]✗[/red] Failed to start the dev server")
+                should_show_instructions = True
+            except FileNotFoundError:
+                console.print("[yellow]![/yellow] uv not found, cannot start server")
+                should_show_instructions = True
 
-        cmd_text = "\n    ".join(commands)
+        if should_show_instructions:
+            console.print()
 
-        console.print(
-            Panel(
-                Markdown(
-                    f"""
+            is_windows = os.name == "nt"
+            commands = [f"cd {project_location}"]
+            if not sync_success:
+                commands.append("uv sync")
+            if is_windows:
+                activate_cmd = r".venv\Scripts\activate"
+            else:
+                activate_cmd = "source .venv/bin/activate"
+            commands.extend(
+                [
+                    activate_cmd,
+                    "pywire dev",
+                ]
+            )
+
+            cmd_text = "\n    ".join(commands)
+
+            console.print(
+                Panel(
+                    Markdown(
+                        f"""
 # System Online 🟢
 
 Run the following commands to enter the environment:
@@ -409,12 +470,12 @@ Run the following commands to enter the environment:
 
 > **Tip:** Install the **PyWire** extension (id: `pywire.pywire`) in VS Code for syntax highlighting and snippets.
             """
-                ),
-                border_style="cyan",
-                title="Initialization Complete",
-                title_align="left",
+                    ),
+                    border_style="cyan",
+                    title="Initialization Complete",
+                    title_align="left",
+                )
             )
-        )
     except KeyboardInterrupt:
         console.print("\n[bold red]System Aborted.[/bold red]")
         sys.exit(1)
