@@ -1,3 +1,5 @@
+import argparse
+import importlib.metadata
 import os
 import subprocess
 import sys
@@ -23,6 +25,13 @@ LOGO = r"""
 ╚═╝        ╚═╝    ╚══╝╚══╝ ╚═╝╚═╝  ╚═╝╚══════╝
  [/bold cyan]
 """
+
+
+def get_version() -> str:
+    try:
+        return importlib.metadata.version("create-pywire-app")
+    except importlib.metadata.PackageNotFoundError:
+        return "0.0.0"
 
 
 class TemplateRenderer:
@@ -270,15 +279,31 @@ class ProjectGenerator:
 def main():
     console.clear()
 
-    # Check for local override for testing
+    # Parse arguments
+    parser = argparse.ArgumentParser(description="Create a new PyWire application")
+    parser.add_argument(
+        "--pywire-version", help="Specify a specific version of pywire to install"
+    )
+    args = parser.parse_args()
+
+    # Check for local override for testing (highest priority)
     use_local = os.environ.get("USE_LOCAL_PYWIRE") == "1"
-    pywire_dep = "pywire"
+
     if use_local:
         pywire_dep = "pywire @ /Users/rholmdahl/projects/pywire-workspace/pywire"
-        console.print("[yellow]WARNING: Using local pywire dependency[/yellow]")
+        # We don't warn yet, wait until after LOGO
+    elif args.pywire_version:
+        pywire_dep = f"pywire=={args.pywire_version}"
+    else:
+        pywire_dep = "pywire"  # Latest
+
+    tool_version = get_version()
 
     console.print(LOGO)
-    console.print("[dim]v0.1.0 • The Python Web Framework[/dim]\n")
+    console.print(f"[dim]v{tool_version} • The Python Web Framework[/dim]\n")
+
+    if use_local:
+        console.print("[yellow]WARNING: Using local pywire dependency[/yellow]")
 
     try:
         # Project Location
