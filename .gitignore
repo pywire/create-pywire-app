@@ -13,3 +13,4 @@ env/
 dist/
 build/
 *.egg-info/
+src/create_pywire_app/_version.py

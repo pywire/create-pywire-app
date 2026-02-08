@@ -21,26 +21,16 @@ build-backend = "hatchling.build"
 [project.optional-dependencies]
 dev = [
     "pytest>=7.4.0",
-    "tox>=4.0.0",
-    "tox-uv>=1.0.0",
+    "pytest-cov",
+    "nox",
+    "ty",
+    "ruff",
 ]
 
-[tool.hatch.build.targets.wheel]
-packages = ["src/create_pywire_app"]
+[tool.ruff]
+exclude = ["src/create_pywire_app/_version.py"]
 
-[tool.hatch.build.targets.wheel.shared-data]
-"src/create_pywire_app/templates" = "share/create_pywire_app/templates"
-
-[tool.hatch.build.targets.sdist]
-include = [
-    "src/create_pywire_app/**",
-    "tests/**",
-    "README.md",
-    "LICENSE",
-    "pyproject.toml",
-]
-
-[tool.mypy]
+[tool.ty.src]
 exclude = [
     "src/create_pywire_app/templates",
 ]

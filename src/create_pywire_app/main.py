@@ -1,5 +1,4 @@
 import argparse
-import importlib.metadata
 import os
 import subprocess
 import sys
@@ -48,17 +47,17 @@ def get_version() -> str:
 
 def resolve_pywire_version(pywire_dep: str) -> Optional[str]:
     """Resolve the actual pywire version that will be installed.
-    
+
     Args:
         pywire_dep: Dependency spec (e.g., 'pywire', 'pywire==0.1.4', 'pywire @ /path')
-    
+
     Returns:
         Resolved version string or None if resolution fails
     """
     # For local paths, we can't resolve via uv pip compile
     if "@" in pywire_dep:
         return None
-    
+
     try:
         # Use uv pip compile to resolve the version without installing
         process = subprocess.run(
@@ -69,16 +68,21 @@ def resolve_pywire_version(pywire_dep: str) -> Optional[str]:
             check=True,
             timeout=10,
         )
-        
+
         # Parse the output for pywire==<version>
         import re
-        match = re.search(r'pywire==([^\s]+)', process.stdout)
+
+        match = re.search(r"pywire==([^\s]+)", process.stdout)
         if match:
             return match.group(1)
-            
-    except (subprocess.CalledProcessError, subprocess.TimeoutExpired, FileNotFoundError):
+
+    except (
+        subprocess.CalledProcessError,
+        subprocess.TimeoutExpired,
+        FileNotFoundError,
+    ):
         pass
-        
+
     return None
 
 
@@ -212,11 +216,17 @@ class ProjectGenerator:
         """Generate VS Code settings."""
         vscode_dir = self.project_path / ".vscode"
         vscode_dir.mkdir(exist_ok=True)
-        self.renderer.copy_static("common/extensions.json", vscode_dir / "extensions.json")
+        self.renderer.copy_static(
+            "common/extensions.json", vscode_dir / "extensions.json"
+        )
 
     def _generate_main(self) -> None:
         """Generate main.py."""
-        template_name = "main-path.py.j2" if self.routing_strategy == "path" else "main-explicit.py.j2"
+        template_name = (
+            "main-path.py.j2"
+            if self.routing_strategy == "path"
+            else "main-explicit.py.j2"
+        )
         context = {
             "pages_dir": "src/pages" if self.use_src else "pages",
         }
@@ -225,7 +235,9 @@ class ProjectGenerator:
 
     def _generate_error_page(self) -> None:
         """Generate __error__.wire."""
-        self.renderer.copy_static("common/__error__.wire", self.pages_dir / "__error__.wire")
+        self.renderer.copy_static(
+            "common/__error__.wire", self.pages_dir / "__error__.wire"
+        )
 
     def _generate_counter(self) -> None:
         """Generate Counter template files."""
@@ -233,13 +245,21 @@ class ProjectGenerator:
         routing = self.routing_strategy
 
         if routing == "path":
-            layout_content = self.renderer.render("counter/path-based/__layout__.wire.j2", context)
+            layout_content = self.renderer.render(
+                "counter/path-based/__layout__.wire.j2", context
+            )
             (self.pages_dir / "__layout__.wire").write_text(layout_content)
-            self.renderer.copy_static("counter/path-based/index.wire", self.pages_dir / "index.wire")
+            self.renderer.copy_static(
+                "counter/path-based/index.wire", self.pages_dir / "index.wire"
+            )
         else:
-            layout_content = self.renderer.render("counter/explicit/layout.wire.j2", context)
+            layout_content = self.renderer.render(
+                "counter/explicit/layout.wire.j2", context
+            )
             (self.pages_dir / "layout.wire").write_text(layout_content)
-            self.renderer.copy_static("counter/explicit/home.wire", self.pages_dir / "home.wire")
+            self.renderer.copy_static(
+                "counter/explicit/home.wire", self.pages_dir / "home.wire"
+            )
 
     def _generate_blog(self) -> None:
         """Generate Blog template files."""
@@ -254,25 +274,47 @@ class ProjectGenerator:
             (self.pages_dir / "posts").mkdir(exist_ok=True)
 
             # Layouts
-            layout_content = self.renderer.render("blog/path-based/__layout__.wire.j2", context)
+            layout_content = self.renderer.render(
+                "blog/path-based/__layout__.wire.j2", context
+            )
             (self.pages_dir / "__layout__.wire").write_text(layout_content)
 
-            posts_layout_content = self.renderer.render("blog/path-based/posts__layout__.wire.j2", context)
-            (self.pages_dir / "posts" / "__layout__.wire").write_text(posts_layout_content)
+            posts_layout_content = self.renderer.render(
+                "blog/path-based/posts__layout__.wire.j2", context
+            )
+            (self.pages_dir / "posts" / "__layout__.wire").write_text(
+                posts_layout_content
+            )
 
             # Pages
-            self.renderer.copy_static("blog/path-based/index.wire", self.pages_dir / "index.wire")
-            self.renderer.copy_static("blog/path-based/posts_index.wire", self.pages_dir / "posts" / "index.wire")
-            self.renderer.copy_static("blog/path-based/posts_slug.wire", self.pages_dir / "posts" / "[slug].wire")
+            self.renderer.copy_static(
+                "blog/path-based/index.wire", self.pages_dir / "index.wire"
+            )
+            self.renderer.copy_static(
+                "blog/path-based/posts_index.wire",
+                self.pages_dir / "posts" / "index.wire",
+            )
+            self.renderer.copy_static(
+                "blog/path-based/posts_slug.wire",
+                self.pages_dir / "posts" / "[slug].wire",
+            )
         else:
             # Layout
-            layout_content = self.renderer.render("blog/explicit/layout.wire.j2", context)
+            layout_content = self.renderer.render(
+                "blog/explicit/layout.wire.j2", context
+            )
             (self.pages_dir / "layout.wire").write_text(layout_content)
 
             # Pages
-            self.renderer.copy_static("blog/explicit/home.wire", self.pages_dir / "home.wire")
-            self.renderer.copy_static("blog/explicit/blog-posts.wire", self.pages_dir / "blog-posts.wire")
-            self.renderer.copy_static("blog/explicit/about.wire", self.pages_dir / "about.wire")
+            self.renderer.copy_static(
+                "blog/explicit/home.wire", self.pages_dir / "home.wire"
+            )
+            self.renderer.copy_static(
+                "blog/explicit/blog-posts.wire", self.pages_dir / "blog-posts.wire"
+            )
+            self.renderer.copy_static(
+                "blog/explicit/about.wire", self.pages_dir / "about.wire"
+            )
 
     def _generate_saas(self) -> None:
         """Generate SaaS template files."""
@@ -287,36 +329,69 @@ class ProjectGenerator:
             (self.pages_dir / "dashboard").mkdir(exist_ok=True)
 
             # Layouts
-            layout_content = self.renderer.render("saas/path-based/__layout__.wire.j2", context)
+            layout_content = self.renderer.render(
+                "saas/path-based/__layout__.wire.j2", context
+            )
             (self.pages_dir / "__layout__.wire").write_text(layout_content)
 
-            dashboard_layout_content = self.renderer.render("saas/path-based/dashboard__layout__.wire.j2", context)
-            (self.pages_dir / "dashboard" / "__layout__.wire").write_text(dashboard_layout_content)
+            dashboard_layout_content = self.renderer.render(
+                "saas/path-based/dashboard__layout__.wire.j2", context
+            )
+            (self.pages_dir / "dashboard" / "__layout__.wire").write_text(
+                dashboard_layout_content
+            )
 
             # Pages
-            self.renderer.copy_static("saas/path-based/index.wire", self.pages_dir / "index.wire")
-            self.renderer.copy_static("saas/path-based/pricing.wire", self.pages_dir / "pricing.wire")
-            self.renderer.copy_static("saas/path-based/login.wire", self.pages_dir / "login.wire")
-            self.renderer.copy_static("saas/path-based/dashboard_index.wire", self.pages_dir / "dashboard" / "index.wire")
-            self.renderer.copy_static("saas/path-based/dashboard_settings.wire", self.pages_dir / "dashboard" / "settings.wire")
+            self.renderer.copy_static(
+                "saas/path-based/index.wire", self.pages_dir / "index.wire"
+            )
+            self.renderer.copy_static(
+                "saas/path-based/pricing.wire", self.pages_dir / "pricing.wire"
+            )
+            self.renderer.copy_static(
+                "saas/path-based/login.wire", self.pages_dir / "login.wire"
+            )
+            self.renderer.copy_static(
+                "saas/path-based/dashboard_index.wire",
+                self.pages_dir / "dashboard" / "index.wire",
+            )
+            self.renderer.copy_static(
+                "saas/path-based/dashboard_settings.wire",
+                self.pages_dir / "dashboard" / "settings.wire",
+            )
         else:
             # Layouts
-            public_layout_content = self.renderer.render("saas/explicit/public-layout.wire.j2", context)
+            public_layout_content = self.renderer.render(
+                "saas/explicit/public-layout.wire.j2", context
+            )
             (self.pages_dir / "public-layout.wire").write_text(public_layout_content)
 
-            auth_layout_content = self.renderer.render("saas/explicit/auth-layout.wire.j2", context)
+            auth_layout_content = self.renderer.render(
+                "saas/explicit/auth-layout.wire.j2", context
+            )
             (self.pages_dir / "auth-layout.wire").write_text(auth_layout_content)
 
             # Pages
-            self.renderer.copy_static("saas/explicit/landing.wire", self.pages_dir / "landing.wire")
-            self.renderer.copy_static("saas/explicit/pricing.wire", self.pages_dir / "pricing.wire")
-            self.renderer.copy_static("saas/explicit/login.wire", self.pages_dir / "login.wire")
-            self.renderer.copy_static("saas/explicit/dashboard-pages.wire", self.pages_dir / "dashboard-pages.wire")
+            self.renderer.copy_static(
+                "saas/explicit/landing.wire", self.pages_dir / "landing.wire"
+            )
+            self.renderer.copy_static(
+                "saas/explicit/pricing.wire", self.pages_dir / "pricing.wire"
+            )
+            self.renderer.copy_static(
+                "saas/explicit/login.wire", self.pages_dir / "login.wire"
+            )
+            self.renderer.copy_static(
+                "saas/explicit/dashboard-pages.wire",
+                self.pages_dir / "dashboard-pages.wire",
+            )
 
     def _generate_adapters(self) -> None:
         """Generate deployment adapter files."""
         if "Docker (Dockerfile)" in self.adapters:
-            self.renderer.copy_static("common/Dockerfile", self.project_path / "Dockerfile")
+            self.renderer.copy_static(
+                "common/Dockerfile", self.project_path / "Dockerfile"
+            )
 
         if "Render (render.yaml)" in self.adapters:
             context = {"project_name": self.project_name}
@@ -360,24 +435,25 @@ def main():
         # -> pywire-workspace = parents[3]
         workspace_root = Path(__file__).resolve().parents[3]
         local_pywire_path = workspace_root / "pywire"
-        
+
         # Try reading _version.py first (generated by hatch-vcs)
         local_pywire_version_file = local_pywire_path / "src" / "pywire" / "_version.py"
         pywire_version_display = "Local (Source)"
-        
+
         if local_pywire_version_file.exists():
-             # Basic regex search for version string to avoid importing it
+            # Basic regex search for version string to avoid importing it
             import re
+
             content = local_pywire_version_file.read_text()
             match = re.search(r'version = ["\']([^"\']+)["\']', content)
             if match:
-                 pywire_version_display = f"{match.group(1)} (Local)"
-        
+                pywire_version_display = f"{match.group(1)} (Local)"
+
         if pywire_version_display == "Local (Source)":
-             # Fallback to toml if needed, though with hatch-vcs pyproject.toml won't have it.
-             # but check anyway? hatch-vcs usually cleans it.
-             # If completely failing, just stick with "Local (Source)"
-             pass
+            # Fallback to toml if needed, though with hatch-vcs pyproject.toml won't have it.
+            # but check anyway? hatch-vcs usually cleans it.
+            # If completely failing, just stick with "Local (Source)"
+            pass
 
     elif args.pywire_version:
         pywire_dep = f"pywire=={args.pywire_version}"
@@ -424,7 +500,9 @@ def main():
             choices=[
                 questionary.Choice("Counter", value="counter"),
                 questionary.Choice("Blog/Portfolio (Markdown + SQLite)", value="blog"),
-                questionary.Choice("SaaS Starter (Stripe + SQLAlchemy + Auth Stub)", value="saas"),
+                questionary.Choice(
+                    "SaaS Starter (Stripe + SQLAlchemy + Auth Stub)", value="saas"
+                ),
             ],
             pointer=">",
         ).unsafe_ask()
@@ -433,7 +511,9 @@ def main():
         routing_strategy = questionary.select(
             "Choose a routing architecture:",
             choices=[
-                questionary.Choice("Path-based", value="path", checked=True, shortcut_key="p"),
+                questionary.Choice(
+                    "Path-based", value="path", checked=True, shortcut_key="p"
+                ),
                 questionary.Choice("Explicit", value="explicit", shortcut_key="e"),
             ],
             qmark="?",
@@ -457,7 +537,9 @@ def main():
         # Generate project
         console.print()
 
-        with console.status("[bold cyan]Synthesizing project structure...", spinner="simpleDots"):
+        with console.status(
+            "[bold cyan]Synthesizing project structure...", spinner="simpleDots"
+        ):
             time.sleep(1.0)
 
             generator = ProjectGenerator(
@@ -513,7 +595,9 @@ def main():
 
         # UV SYNC
         sync_success = False
-        with console.status("[bold cyan]Initializing environment (uv sync)...", spinner="bouncingBar"):
+        with console.status(
+            "[bold cyan]Initializing environment (uv sync)...", spinner="bouncingBar"
+        ):
             try:
                 env = os.environ.copy()
                 env.pop("VIRTUAL_ENV", None)
