@@ -148,6 +148,7 @@ class ProjectGenerator:
     def get_template_description(self) -> str:
         """Get description for the selected template."""
         descriptions = {
+            "skeleton": "A blank slate with only a single page.",
             "counter": "A minimal counter app demonstrating interactivity.",
             "blog": "A blog and portfolio starter with Markdown content stored in SQLite.",
             "saas": "A SaaS starter with Stripe, SQLAlchemy models, and stubbed auth.",
@@ -177,6 +178,8 @@ class ProjectGenerator:
         self._generate_vscode_settings()
 
         # Generate template-specific files
+        if self.template == "skeleton":
+            self._generate_skeleton()
         if self.template == "counter":
             self._generate_counter()
         if self.template == "blog":
@@ -186,6 +189,15 @@ class ProjectGenerator:
 
         # Generate deployment adapters
         self._generate_adapters()
+
+    def _generate_skeleton(self) -> None:
+        """Generate Skeleton template files."""
+        context = {
+            "project_name": self.project_name,
+            "routing": self.routing_strategy,
+        }
+        content = self.renderer.render("skeleton/index.wire.j2", context)
+        (self.pages_dir / "index.wire").write_text(content)
 
     def _generate_pyproject(self) -> None:
         """Generate pyproject.toml."""
@@ -498,12 +510,14 @@ def main():
         template = questionary.select(
             "Select a starting template:",
             choices=[
+                questionary.Choice("Skeleton (minimal)", value="skeleton"),
                 questionary.Choice("Counter", value="counter"),
                 questionary.Choice("Blog/Portfolio (Markdown + SQLite)", value="blog"),
                 questionary.Choice(
                     "SaaS Starter (Stripe + SQLAlchemy + Auth Stub)", value="saas"
                 ),
             ],
+            default="counter",
             pointer=">",
         ).unsafe_ask()
 
