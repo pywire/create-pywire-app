@@ -1,8 +1,6 @@
 !path "/"
 !layout "public-layout.wire"
 
---- html ---
-
 <section>
     <h1>Ship a SaaS with pywire</h1>
     <p>This starter includes Stripe + SQLAlchemy + stubbed auth.</p>

@@ -1,7 +1,7 @@
+---
 count = wire(0)
 
---- html ---
-
+---
 <div class="container">
     <h1>Counter</h1>
     <p>Edit <code>pages/index.wire</code> to watch hot reload in action.</p>

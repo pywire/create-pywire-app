@@ -4,6 +4,7 @@
 }
 !layout "layout.wire"
 
+---
 from pathlib import Path
 import sqlite3
 import markdown
@@ -32,8 +33,7 @@ if path.detail:
         (slug,),
     ).fetchone()
 
---- html ---
-
+---
 <main>
     <!-- List view: /posts -->
     <section $if={path.list}>

@@ -1,6 +1,7 @@
 !path "/"
 !layout "layout.wire"
 
+---
 from pathlib import Path
 import sqlite3
 
@@ -48,8 +49,7 @@ posts = cursor.execute(
     "select slug, title from posts order by id desc"
 ).fetchall()
 
---- html ---
-
+---
 <section>
     <h1>Blog + Portfolio (Explicit)</h1>
     <p>Routes are declared with <code>!path</code> and files are named semantically.</p>

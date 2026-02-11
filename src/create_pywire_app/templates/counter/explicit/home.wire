@@ -1,10 +1,10 @@
 !path "/"
 !layout "layout.wire"
 
+---
 count = wire(0)
 
---- html ---
-
+---
 <div class="container">
     <h1>Counter (Explicit Routing)</h1>
     <p>This page uses explicit routing via <code>!path</code>.</p>

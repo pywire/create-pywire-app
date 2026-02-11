@@ -1,3 +1,4 @@
+---
 from pathlib import Path
 import sqlite3
 
@@ -45,8 +46,7 @@ posts = cursor.execute(
     "select slug, title from posts order by id desc"
 ).fetchall()
 
---- html ---
-
+---
 <section>
     <h1>Blog + Portfolio</h1>
     <p>Markdown posts backed by SQLite.</p>

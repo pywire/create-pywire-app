@@ -4,6 +4,7 @@
 }
 !layout "auth-layout.wire"
 
+---
 # Demo data - in a real app, fetched from database
 settings_sections = [
     {"id": "account", "title": "Account Settings", "description": "Configure your account preferences."},
@@ -11,8 +12,7 @@ settings_sections = [
     {"id": "team", "title": "Team", "description": "Invite and manage team members."},
 ]
 
---- html ---
-
+---
 <main>
     <!-- Dashboard home: /dashboard -->
     <section $if={path.home}>

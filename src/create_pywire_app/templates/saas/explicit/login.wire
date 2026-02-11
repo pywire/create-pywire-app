@@ -1,8 +1,6 @@
 !path "/login"
 !layout "public-layout.wire"
 
---- html ---
-
 <section>
     <h1>Login</h1>
     <p>TODO: Replace with pywire auth once available.</p>
